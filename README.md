@@ -18,12 +18,12 @@ The system is simulation-based, evaluating price convergence, reduced grid depen
 
 ## Technologies Used:
 
-Blockchain: Ethereum
+### Blockchain: Ethereum
 
-Smart Contracts: Solidity
+### Smart Contracts: Solidity
 
-Backend: Python (Flask/Django) or Node.js
+### Backend: Python (Flask/Django) or Node.js
 
-Frontend: React / Next.js
+### Frontend: React / Next.js
 
-Simulation Tools: Custom SDR-based energy trading simulator
+### Simulation Tools: Custom SDR-based energy trading simulator
