@@ -22,7 +22,7 @@ Blockchain: Ethereum
 
 Smart Contracts: Solidity
 
-Backend: Python (Flask/Django) or Node.js
+Backend: Python (Flask/Django)
 
 Frontend: React / Next.js
 
