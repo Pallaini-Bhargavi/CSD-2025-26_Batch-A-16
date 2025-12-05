@@ -1,4 +1,4 @@
-##📌 Secure Data Hiding Using Calendar Heatmap Steganography
+## Secure Data Hiding Using Calendar Heatmap Steganography
 
 A lightweight and secure steganography system that hides secret text messages inside calendar heatmap tiles using key-based randomization.
 
