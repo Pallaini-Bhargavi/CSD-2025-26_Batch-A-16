@@ -108,4 +108,3 @@ ad3%@s!d07c
 MEET AT 5 PM
 ```
 
-### Reference Papers:
