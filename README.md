@@ -82,9 +82,9 @@ java Decoder encoded_heatmap.png KEY
 
 ### Encoding
 ### Input:
-``
+```
 MEET AT 5 PM
-``
+```
 
 ### Output:
 ```
