@@ -24,35 +24,39 @@ Output generated as a heatmap image (PNG)
 
 # 🧠 How It Works
 
-Encoding (Hiding Message)
+# Encoding (Hiding Message)
 
-User enters a text message.
+1. User enters a text message.
 
-Message is converted to binary.
+2. Message is converted to cipher text.
+ 
+3. Ciphertext is again converted to binary.
 
-Heatmap grid is generated (e.g., 60 × 60 tiles).
+4. Heatmap grid is generated .
 
-Secret key generates a random tile order.
+5. Secret key generates in a random tile order.
 
-Bits are embedded into tiles as specific colors.
+6. Bits are embedded into tiles as specific colors.
 
-Final encoded heatmap image is saved.
+7. Final encoded heatmap image is saved.
 
-Decoding (Extracting Message)
+# Decoding (Extracting Message)
 
-Encoded heatmap image is loaded.
+1. Encoded heatmap image is loaded.
 
-User enters the same secret key.
+2. User enters the same secret key.
 
-Tile order is recreated.
+3. Tile order is recreated.
 
-Colors → bits → original message is reconstructed.
+4. Colors → bits → original message is reconstructed.
 
 # 🚀 Technologies Used
 
 Java (Core logic for encoding & decoding)
 
 Image Processing (BufferedImage)
+
+AES algorithm (Cipher text)
 
 Custom Color Encoding
 
@@ -67,23 +71,43 @@ To build a secure, flexible, and less detectable data-hiding system using heatma
 Integration with secure messaging apps
 
 # 📦 How to Run
+
 Encoding
 java Encoder "YOUR MESSAGE HERE"
 
 Decoding
 java Decoder encoded_heatmap.png KEY
 
-# 🧪 Example
+## 🧪 Example
 
-Input Message:
+# Encoding
+
+# Input:
+
 ``
 MEET AT 5 PM
 ``
-Output:
+
+# Output:
+
 ```
 A heatmap image (encoded_heatmap.png)
 
-Key (e.g., 17549)
+Key (e.g., ad3%@s!d07c)
 ```
-Decoding:
+
+# Decoding:
+
+# Input:
+
 Enter image + key → original message returned.
+```
+encoded_heatmap.png
+ad3%@s!d07c
+```
+
+# Output:
+
+```
+MEET AT 5 PM
+```
