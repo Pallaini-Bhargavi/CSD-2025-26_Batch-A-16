@@ -50,7 +50,7 @@ A key-based random tile sequence ensures that the message can be decoded only by
 
 4. Colors → bits → original message is reconstructed.
 
-# 🚀 Technologies Used
+### 🚀 Technologies Used
 
 1. Java (Core logic for encoding & decoding)
 
@@ -107,3 +107,5 @@ ad3%@s!d07c
 ```
 MEET AT 5 PM
 ```
+
+### Reference Papers:
