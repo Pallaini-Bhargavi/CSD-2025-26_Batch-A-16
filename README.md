@@ -50,8 +50,7 @@ A key-based random tile sequence ensures that the message can be decoded only by
 
 4. Colors → bits → original message is reconstructed.
 
-### 🚀 Technologies Used
-
+## 🚀 Technologies Used
 
 1. Java (Core logic for encoding & decoding)
 
@@ -63,15 +62,15 @@ A key-based random tile sequence ensures that the message can be decoded only by
 
 5. Pseudo-Random Key Scheduling
 
-### 🎯 Goal
+## 🎯 Goal
 
 To build a secure, flexible, and less detectable data-hiding system using heatmap visualization instead of traditional image or QR-based steganography.
 
-### 🌱 Future Enhancements
+## 🌱 Future Enhancements
 
 Integration with secure messaging apps
 
-### 📦 How to Run
+## 📦 How to Run
 
 Encoding
 java Encoder "YOUR MESSAGE HERE"
@@ -79,7 +78,7 @@ java Encoder "YOUR MESSAGE HERE"
 Decoding
 java Decoder encoded_heatmap.png KEY
 
-### 🧪 Example
+## 🧪 Example
 
 ### Encoding
 ### Input:
