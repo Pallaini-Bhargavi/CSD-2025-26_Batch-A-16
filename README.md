@@ -1,14 +1,14 @@
-## Secure Data Hiding Using Calendar Heatmap Steganography
+### Secure Data Hiding Using Calendar Heatmap Steganography
 
 A lightweight and secure steganography system that hides secret text messages inside calendar heatmap tiles using key-based randomization.
 
-📝 Overview
+# 📝 Overview
 
 This project introduces a novel steganography approach that hides secret information inside a calendar-style heatmap, instead of commonly used media like images or QR codes.
 The heatmap visually resembles a normal activity chart, making the hidden data difficult to detect.
 A key-based random tile sequence ensures that the message can be decoded only by someone who has the valid key.
 
-🔐 Features
+# 🔐 Features
 
 Hide text messages inside colored heatmap tiles
 
@@ -22,7 +22,8 @@ Simple encoding and decoding interfaces
 
 Output generated as a heatmap image (PNG)
 
-🧠 How It Works
+# 🧠 How It Works
+
 Encoding (Hiding Message)
 
 User enters a text message.
@@ -47,7 +48,7 @@ Tile order is recreated.
 
 Colors → bits → original message is reconstructed.
 
-🚀 Technologies Used
+# 🚀 Technologies Used
 
 Java (Core logic for encoding & decoding)
 
@@ -57,38 +58,32 @@ Custom Color Encoding
 
 Pseudo-Random Key Scheduling
 
-🎯 Goal
+# 🎯 Goal
 
 To build a secure, flexible, and less detectable data-hiding system using heatmap visualization instead of traditional image or QR-based steganography.
 
-🌱 Future Enhancements
-
-Multi-bit tile encoding for higher data capacity
+# 🌱 Future Enhancements
 
 Integration with secure messaging apps
 
-Mobile and web-based user interface
-
-Encryption + steganography hybrid layer
-
-📦 How to Run
+# 📦 How to Run
 Encoding
 java Encoder "YOUR MESSAGE HERE"
 
 Decoding
 java Decoder encoded_heatmap.png KEY
 
-🧪 Example
+# 🧪 Example
 
 Input Message:
-
+``
 MEET AT 5 PM
-
+``
 Output:
-
+```
 A heatmap image (encoded_heatmap.png)
 
 Key (e.g., 17549)
-
+```
 Decoding:
 Enter image + key → original message returned.
