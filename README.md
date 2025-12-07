@@ -52,6 +52,7 @@ A key-based random tile sequence ensures that the message can be decoded only by
 
 ### 🚀 Technologies Used
 
+
 1. Java (Core logic for encoding & decoding)
 
 2. Image Processing (BufferedImage)
