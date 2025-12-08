@@ -107,4 +107,23 @@ ad3%@s!d07c
 ```
 MEET AT 5 PM
 ```
+## Research Papers:
+Paper1 :
+```
+https://ieeexplore.ieee.org/document/10083471
+```
 
+Paper 2:
+```
+https://ieeexplore.ieee.org/document/9335027 
+```
+
+Paper3 :
+```
+https://ieeexplore.ieee.org/document/8985346
+```
+
+Paper4 :
+```
+https://www.researchgate.net/publication/396155426_A_secure_image_steganography_based_on_Hamming_codes_and_image_block_complexity_estimation_using_a_zig-zag_order
+```
