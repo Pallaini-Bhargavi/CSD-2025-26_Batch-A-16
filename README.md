@@ -125,5 +125,10 @@ https://ieeexplore.ieee.org/document/8985346
 
 Paper4 :
 ```
-https://www.researchgate.net/publication/396155426_A_secure_image_steganography_based_on_Hamming_codes_and_image_block_complexity_estimation_using_a_zig-zag_order
+https://www.researchgate.net/publication/301756752_QR-code_Image_Steganography
+```
+
+Paper5 :
+```
+https://www.researchgate.net/publication/351066080_Steganography_of_Messages_Encrypted_With_QR_Code
 ```
