@@ -237,14 +237,16 @@
     <div class="request-card" th:each="r : ${pendingRequests}">
         <div><b>Email:</b> <span th:text="${r.email}"></span></div>
         <div class="action-row">
-            <button class="btn green"
-        th:onclick="|approve(${r.id})|">
+           <button class="btn green"
+        th:onclick="|approve(${r.id}, this)|">
     Accept
 </button>
+
 <button class="btn red"
-        th:onclick="|reject(${r.id})|">
+        th:onclick="|reject(${r.id}, this)|">
     Reject
 </button>
+
 
         </div>
     </div>
@@ -302,15 +304,24 @@ function showSection(sectionId, el) {
     el.classList.add('active');
 }
 
-function approve(id) {
+function approve(id, btn) {
+    btn.disabled = true;
     fetch(`/api/admin/approve/${id}`, { method: "POST" })
-        .then(() => location.reload());
+        .then(res => {
+            if (!res.ok) alert("Already processed");
+            location.reload();
+        });
 }
 
-function reject(id) {
+function reject(id, btn) {
+    btn.disabled = true;
     fetch(`/api/admin/reject/${id}`, { method: "POST" })
-        .then(() => location.reload());
+        .then(res => {
+            if (!res.ok) alert("Already processed");
+            location.reload();
+        });
 }
+
 </script>
 
 </body>

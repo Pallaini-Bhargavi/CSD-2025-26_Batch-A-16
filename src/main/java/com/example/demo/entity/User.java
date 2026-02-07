@@ -1,7 +1,7 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -16,33 +16,20 @@ public class User {
     @Column(name = "password", nullable = false)
     private String passwordHash;
 
-    @Column(name = "public_key")
+    @Column(name = "public_key", columnDefinition = "TEXT", nullable = false)
     private String publicKey;
 
-    // ✅ ADD THIS FIELD
+    // ✅ ENCRYPTED PRIVATE KEY (NOT RAW)
+    @Column(name = "encrypted_private_key", columnDefinition = "TEXT", nullable = false)
+    private String encryptedPrivateKey;
+
     @Column(name = "security_question", nullable = false)
     private String securityQuestion;
 
-    @Column(name = "security_answer_hash")
+    @Column(name = "security_answer_hash", nullable = false)
     private String securityAnswerHash;
 
-    @Column(name = "reset_attempts")
-    private Integer resetAttempts = 0;
-
-    @Column(name = "reset_locked_until")
-    private LocalDateTime resetLockedUntil;
-@Column(name = "encrypted_private_key", length = 2048)
-private String encryptedPrivateKey;
-
     // ===== GETTERS & SETTERS =====
-
-    public String getSecurityQuestion() {
-        return securityQuestion;
-    }
-
-    public void setSecurityQuestion(String securityQuestion) {
-        this.securityQuestion = securityQuestion;
-    }
 
     public Long getId() {
         return id;
@@ -51,13 +38,6 @@ private String encryptedPrivateKey;
     public String getUserEmail() {
         return userEmail;
     }
-public String getEncryptedPrivateKey() {
-    return encryptedPrivateKey;
-}
-
-public void setEncryptedPrivateKey(String encryptedPrivateKey) {
-    this.encryptedPrivateKey = encryptedPrivateKey;
-}
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
@@ -68,9 +48,8 @@ public void setEncryptedPrivateKey(String encryptedPrivateKey) {
     }
 
     public void setPasswordHash(String passwordHash) {
-    this.passwordHash = passwordHash;
-}
-
+        this.passwordHash = passwordHash;
+    }
 
     public String getPublicKey() {
         return publicKey;
@@ -80,6 +59,22 @@ public void setEncryptedPrivateKey(String encryptedPrivateKey) {
         this.publicKey = publicKey;
     }
 
+    public String getEncryptedPrivateKey() {
+        return encryptedPrivateKey;
+    }
+
+    public void setEncryptedPrivateKey(String encryptedPrivateKey) {
+        this.encryptedPrivateKey = encryptedPrivateKey;
+    }
+
+    public String getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public void setSecurityQuestion(String securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
     public String getSecurityAnswerHash() {
         return securityAnswerHash;
     }
@@ -87,21 +82,4 @@ public void setEncryptedPrivateKey(String encryptedPrivateKey) {
     public void setSecurityAnswerHash(String securityAnswerHash) {
         this.securityAnswerHash = securityAnswerHash;
     }
-
-    public Integer getResetAttempts() {
-        return resetAttempts;
-    }
-
-    public void setResetAttempts(Integer resetAttempts) {
-        this.resetAttempts = resetAttempts;
-    }
-
-    public LocalDateTime getResetLockedUntil() {
-        return resetLockedUntil;
-    }
-
-    public void setResetLockedUntil(LocalDateTime resetLockedUntil) {
-        this.resetLockedUntil = resetLockedUntil;
-    }
 }
-

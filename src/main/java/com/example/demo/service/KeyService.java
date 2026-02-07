@@ -1,5 +1,5 @@
 package com.example.demo.service;
-import java.security.SecureRandom;
+
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -8,31 +8,42 @@ import java.security.spec.ECGenParameterSpec;
 
 import org.springframework.stereotype.Service;
 
-
-
+import com.example.demo.security.AESUtil;
 @Service
 public class KeyService {
 
-    public KeyPair generateECCKeyPairFromPassword(String password)
-            throws Exception {
-
-        MessageDigest sha256 =
-                MessageDigest.getInstance("SHA-256");
-
-        byte[] seed = sha256.digest(password.getBytes());
-
-        SecureRandom random =
-                SecureRandom.getInstance("SHA1PRNG");
-        random.setSeed(seed);
+    public KeyPair generateECCKeyPair() throws Exception {
 
         KeyPairGenerator keyGen =
                 KeyPairGenerator.getInstance("EC");
 
         keyGen.initialize(
-                new ECGenParameterSpec("secp256r1"),
-                random);
+                new ECGenParameterSpec("secp256r1"));
 
         return keyGen.generateKeyPair();
     }
+
+    // 🔐 Encrypt private key using password
+    public byte[] encryptPrivateKey(byte[] privateKey, String password)
+            throws Exception {
+
+        byte[] aesKey = deriveKey(password);
+        return AESUtil.encryptBytes(aesKey, privateKey);
+    }
+
+    // 🔓 Decrypt private key using password
+    public byte[] decryptPrivateKey(byte[] encryptedKey, String password)
+            throws Exception {
+
+        byte[] aesKey = deriveKey(password);
+        return AESUtil.decryptBytes(aesKey, encryptedKey);
+    }
+
+    private byte[] deriveKey(String password) throws Exception {
+        MessageDigest sha =
+                MessageDigest.getInstance("SHA-256");
+        return sha.digest(password.getBytes());
+    }
 }
+
 

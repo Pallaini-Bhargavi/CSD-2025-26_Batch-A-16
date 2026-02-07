@@ -38,48 +38,50 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(HttpServletRequest request,
-                           RedirectAttributes redirectAttributes) {
+public String register(HttpServletRequest request,
+                       RedirectAttributes redirectAttributes) {
 
-        try {
-            String email = request.getParameter("email").trim().toLowerCase();
-            String password = request.getParameter("password");
-            String securityQuestion = request.getParameter("securityQuestion");
-            String securityAnswer = request.getParameter("securityAnswer");
+    try {
+        String email = request.getParameter("email").trim().toLowerCase();
+        String password = request.getParameter("password");
+        String securityQuestion = request.getParameter("securityQuestion");
+        String securityAnswer = request.getParameter("securityAnswer");
 
-            if (userRepository.findByUserEmail(email).isPresent()) {
-                redirectAttributes.addFlashAttribute("alreadyRegistered", true);
-                return "redirect:/register";
-            }
-
-            // 🔐 ECC KEY PAIR (DERIVED FROM PASSWORD)
-            KeyPair keyPair =
-                    keyService.generateECCKeyPairFromPassword(password);
-
-            User user = new User();
-            user.setUserEmail(email);
-            user.setPasswordHash(passwordEncoder.encode(password));
-            user.setSecurityQuestion(securityQuestion);
-            user.setSecurityAnswerHash(
-                    passwordEncoder.encode(securityAnswer.trim().toLowerCase()));
-
-            user.setPublicKey(
-                    Base64.getEncoder()
-                            .encodeToString(
-                                    keyPair.getPublic().getEncoded()));
-
-            userRepository.save(user);
-
-            redirectAttributes.addFlashAttribute(
-                    "registerSuccess", "Registration successful.");
-            return "redirect:/login";
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(
-                    "registerError", "Registration failed");
+        if (userRepository.findByUserEmail(email).isPresent()) {
+            redirectAttributes.addFlashAttribute("alreadyRegistered", true);
             return "redirect:/register";
         }
+
+        // 🔐 Generate ECC key ONCE
+        KeyPair keyPair = keyService.generateECCKeyPair();
+
+        User user = new User();
+        user.setUserEmail(email);
+        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setSecurityQuestion(securityQuestion);
+        user.setSecurityAnswerHash(
+                passwordEncoder.encode(securityAnswer.trim().toLowerCase()));
+
+        // ✅ STORE KEYS DIRECTLY
+        user.setPublicKey(Base64.getEncoder()
+                .encodeToString(keyPair.getPublic().getEncoded()));
+
+        user.setEncryptedPrivateKey(Base64.getEncoder()
+                .encodeToString(keyPair.getPrivate().getEncoded()));
+
+        userRepository.save(user);
+
+        redirectAttributes.addFlashAttribute(
+                "registerSuccess", "Registration successful.");
+        return "redirect:/login";
+
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute(
+                "registerError", "Registration failed");
+        return "redirect:/register";
     }
+}
+
 
     // ================= LOGIN =================
 
@@ -89,47 +91,34 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String email,
-                        @RequestParam String password,
-                        RedirectAttributes redirectAttributes,
-                        HttpSession session) {
+public String login(@RequestParam String email,
+                    @RequestParam String password,
+                    RedirectAttributes redirectAttributes,
+                    HttpSession session) {
 
-        User user = userRepository
-                .findByUserEmail(email.trim().toLowerCase())
-                .orElse(null);
+    User user = userRepository
+            .findByUserEmail(email.trim().toLowerCase())
+            .orElse(null);
 
-        if (user == null) {
-            redirectAttributes.addFlashAttribute(
-                    "loginError", "Email not found.");
-            return "redirect:/login";
-        }
-
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            redirectAttributes.addFlashAttribute(
-                    "loginError", "Incorrect password.");
-            return "redirect:/login";
-        }
-
-        try {
-            // 🔐 regenerate SAME ECC key from password
-            KeyPair keyPair =
-                    keyService.generateECCKeyPairFromPassword(password);
-
-            session.setAttribute("USER_EMAIL", user.getUserEmail());
-            session.setAttribute(
-                    "PRIVATE_KEY",
-                    Base64.getEncoder()
-                            .encodeToString(
-                                    keyPair.getPrivate().getEncoded()));
-
-            return "redirect:/home";
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(
-                    "loginError", "Login failed.");
-            return "redirect:/login";
-        }
+    if (user == null) {
+        redirectAttributes.addFlashAttribute(
+                "loginError", "Email not found.");
+        return "redirect:/login";
     }
+
+    if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+        redirectAttributes.addFlashAttribute(
+                "loginError", "Incorrect password.");
+        return "redirect:/login";
+    }
+
+    // ✅ LOAD STORED PRIVATE KEY
+    session.setAttribute("USER_EMAIL", user.getUserEmail());
+    session.setAttribute("PRIVATE_KEY", user.getEncryptedPrivateKey());
+
+    return "redirect:/home"; // or /encode
+}
+
 
     // ================= LOGOUT =================
 

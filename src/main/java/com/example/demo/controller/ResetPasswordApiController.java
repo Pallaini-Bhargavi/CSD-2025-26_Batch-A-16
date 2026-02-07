@@ -17,6 +17,7 @@ import com.example.demo.entity.User;
 import com.example.demo.repository.ResetPasswordRequestRepository;
 import com.example.demo.repository.UserRepository;
 
+
 @RestController
 @RequestMapping("/api")
 public class ResetPasswordApiController {
@@ -26,6 +27,8 @@ public class ResetPasswordApiController {
 
     @Autowired
     private ResetPasswordRequestRepository resetRepo;
+
+    
 
     @Autowired
     private PasswordEncoder passwordEncoder;

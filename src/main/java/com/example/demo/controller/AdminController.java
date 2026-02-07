@@ -9,14 +9,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import com.example.demo.entity.User;
 import org.springframework.ui.Model;
 import com.example.demo.entity.ResetPasswordRequest;
-import com.example.demo.entity.User;
+
 import com.example.demo.repository.ResetPasswordRequestRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.AdminService;
 import com.example.demo.service.MailService;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -29,12 +30,9 @@ public class AdminController {
     @Autowired
     private UserRepository userRepository;
 
+
     @Autowired
     private ResetPasswordRequestRepository resetRepo;
-
-
-    @Autowired
-    private UserRepository userRepo;
 
     @Autowired
     private MailService mailService;
@@ -48,7 +46,7 @@ public class AdminController {
 
     /* ================= ADMIN LOGIN PROCESS ================= */
     @PostMapping("/admin-login")
-public String adminLogin(@RequestParam String email,
+    public String adminLogin(@RequestParam String email,
                          @RequestParam String password,
                          HttpSession session,
                          RedirectAttributes redirectAttributes) {
@@ -95,49 +93,64 @@ public String adminLogin(@RequestParam String email,
 
     return "admin-dashboard";
 }
+    
+@Transactional
 @PostMapping("/api/admin/approve/{id}")
 public ResponseEntity<?> approve(@PathVariable Long id) {
 
-    ResetPasswordRequest req = resetRepo.findById(id).orElseThrow();
-    User user = userRepo.findByUserEmail(req.getEmail()).orElseThrow();
+    ResetPasswordRequest req =
+            resetRepo.findById(id).orElseThrow();
 
+    User user =
+            userRepository.findByUserEmail(req.getEmail())
+                    .orElseThrow();
+
+    // ✅ ONLY update password hash
     user.setPasswordHash(req.getNewPasswordHash());
-    userRepo.save(user);
+    userRepository.save(user);
 
+    // ✅ update request status
     req.setStatus("APPROVED");
     resetRepo.save(req);
-try {
-    mailService.sendTextMail(
-        req.getEmail(),
-        "Password Reset Approved",
-        "Your password reset request has been approved."
-    );
-} catch (Exception e) {
-    e.printStackTrace(); // log only, don't break admin flow
-}
 
+    try {
+        mailService.sendTextMail(
+            req.getEmail(),
+            "Password Reset Approved",
+            "Your password reset request has been approved."
+        );
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
 
     return ResponseEntity.ok().build();
 }
 
-    
+
 @PostMapping("/api/admin/reject/{id}")
 public ResponseEntity<?> reject(@PathVariable Long id) {
 
-    ResetPasswordRequest req = resetRepo.findById(id).orElseThrow();
+    ResetPasswordRequest req =
+            resetRepo.findById(id).orElseThrow();
+
+    if (!"PENDING".equals(req.getStatus())) {
+        return ResponseEntity
+                .badRequest()
+                .body("Request already processed.");
+    }
+
     req.setStatus("REJECTED");
     resetRepo.save(req);
 
     try {
-    mailService.sendTextMail(
-        req.getEmail(),
-        "Password Reset Rejected",
-        "Your password reset request was rejected."
-    );
-} catch (Exception e) {
-    e.printStackTrace();
-}
-
+        mailService.sendTextMail(
+            req.getEmail(),
+            "Password Reset Rejected",
+            "Your password reset request was rejected."
+        );
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
 
     return ResponseEntity.ok().build();
 }
