@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Data Hiding using Calendar Heatmap steganography</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<button class="back-btn" onclick="location.href='/home'">← Back</button>
+
+<div class="page-header">
+    <div class="project-title">🔐 Secure Data Hiding using Calendar Heatmap steganography</div>
+    <div class="page-subtitle">Encode Message</div>
+</div>
+
+<div class="container">
+    <div class="card" style="margin-top:60px;">
+
+        <label>Receiver Email</label>
+        <input type="email" id="recvEmail" placeholder="Enter receiver email">
+
+        <label>Plaintext Message</label>
+        <textarea id="plainText"
+                  rows="5"
+                  maxlength="2000"
+                  placeholder="Enter text"
+                  oninput="updateMainCount()"></textarea>
+
+        <!-- COUNT + CLEAR (MAIN AREA) -->
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            font-size:12px;
+            margin-top:6px;
+            color:#aaa;
+        ">
+            <span id="mainCharCount">0/2000</span>
+            <span style="cursor:pointer;color:#26c1dc;"
+                  onclick="clearMainText()">Clear</span>
+        </div>
+
+        <button class="btn" onclick="generateHeatmap()">Generate Heatmap</button>
+
+    </div>
+</div>
+
+<!-- ================= ERROR POPUP ================= -->
+<div id="errorPopup" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.7);
+    z-index:999;
+    align-items:center;
+    justify-content:center;
+">
+    <div style="
+        background:#fff;
+        color:#dc2626;
+        padding:22px;
+        border-radius:16px;
+        width:360px;
+        text-align:center;
+        font-weight:600;
+        position:relative;
+    ">
+        <span onclick="closeError()" style="
+            position:absolute;
+            top:10px;
+            right:14px;
+            cursor:pointer;
+        ">✖</span>
+        <div id="errorMsg"></div>
+    </div>
+</div>
+
+<!-- ================= SUCCESS POPUP ================= -->
+<div id="successPopup" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.7);
+    z-index:999;
+    align-items:center;
+    justify-content:center;
+">
+    <div style="
+        background:#ffffff;
+        color:#16a34a;
+        padding:22px;
+        border-radius:16px;
+        width:360px;
+        text-align:center;
+        font-weight:600;
+        position:relative;
+    ">
+        <span onclick="closeSuccess()" style="
+            position:absolute;
+            top:10px;
+            right:14px;
+            cursor:pointer;
+            font-size:18px;
+            font-weight:700;
+        ">✖</span>
+        <div>Heatmap sent successfully.</div>
+    </div>
+</div>
+
+<!-- ================= PREVIEW POPUP ================= -->
+<div id="previewModal" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.7);
+    z-index:999;
+    align-items:center;
+    justify-content:center;
+">
+    <div style="
+        background:#ffffff;
+        padding:20px;
+        border-radius:16px;
+        width:380px;
+        text-align:center;
+        position:relative;
+    ">
+
+        <span onclick="closePreview()" style="
+            position:absolute;
+            top:10px;
+            right:14px;
+            cursor:pointer;
+            font-size:18px;
+            font-weight:700;
+            color: black;
+        ">✖</span>
+
+        <h3 style="margin-bottom:10px; color: blue;">Heatmap Preview</h3>
+
+        <img id="previewImage"
+             style="width:100%;border-radius:12px;margin-bottom:16px;display:none;">
+
+        <button class="btn blue" onclick="sendHeatmap()">Send</button>
+    </div>
+</div>
+
+<script>
+const MAX_LEN = 2000;
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/* ---------- MAIN TEXTAREA COUNT ---------- */
+function updateMainCount() {
+    const txt = document.getElementById("plainText");
+
+    if (txt.value.length > MAX_LEN) {
+        txt.value = txt.value.substring(0, MAX_LEN);
+        showError("Character limit exceeded (2000).");
+    }
+
+    document.getElementById("mainCharCount").innerText =
+        txt.value.length + "/2000";
+}
+
+function clearMainText() {
+    document.getElementById("plainText").value = "";
+    updateMainCount();
+}
+
+/* ---------- POPUPS ---------- */
+function showError(msg) {
+    document.getElementById("errorMsg").innerText = msg;
+    document.getElementById("errorPopup").style.display = "flex";
+}
+
+function closeError() {
+    document.getElementById("errorPopup").style.display = "none";
+}
+
+function showSuccess() {
+    document.getElementById("successPopup").style.display = "flex";
+}
+
+function closeSuccess() {
+    document.getElementById("successPopup").style.display = "none";
+}
+
+function closePreview() {
+    document.getElementById("previewModal").style.display = "none";
+}
+
+/* ---------- ACTIONS ---------- */
+function sendHeatmap() {
+
+    fetch("/api/encode/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            receiverEmail: document.getElementById("recvEmail").value
+        })
+    })
+    .then(res => {
+        if (!res.ok) {
+            return res.text().then(msg => { throw msg; });
+        }
+        document.getElementById("previewModal").style.display = "none";
+        showSuccess();
+    })
+    .catch(err => {
+        showError(err);
+    });
+}
+
+function generateHeatmap() {
+
+    const email = document.getElementById("recvEmail").value.trim();
+    const msg   = document.getElementById("plainText").value.trim();
+
+    if (!email) {
+        showError("Receiver email is required.");
+        return;
+    }
+
+    if (!isValidEmail(email)) {
+        showError("Please enter a valid email address.");
+        return;
+    }
+
+    if (!msg) {
+        showError("Text cannot be empty.");
+        return;
+    }
+
+    fetch("/api/encode/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            receiverEmail: email,
+            plaintext: msg
+        })
+    })
+    .then(res => {
+        if (res.status === 401) {
+            throw "Session expired. Please login again.";
+        }
+        if (!res.ok) {
+            return res.text().then(msg => { throw msg; });
+        }
+        return res.blob();
+    })
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+
+        const img = document.getElementById("previewImage");
+        img.src = url;
+        img.style.display = "block";
+
+        document.getElementById("previewModal").style.display = "flex";
+    })
+    .catch(err => {
+        showError(err);
+    });
+}
+</script>
+
+</body>
+</html>

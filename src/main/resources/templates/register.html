@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Secure Data Hiding using Calendar Heatmap steganography</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<button class="back-btn" onclick="location.href='/'">← Back</button>
+
+<div class="page-header">
+    <div class="project-title">
+        🔐 Secure Data Hiding using Calendar Heatmap steganography
+    </div>
+    <div class="page-subtitle">Register</div>
+</div>
+
+<div class="container">
+    <div class="card">
+
+    <form action="/register" method="post" onsubmit="return validateRegister()">
+
+    <label class="required">Email</label>
+    <input type="email" name="email" id="regEmail" placeholder="Enter Email">
+
+    <label class="required">Password</label>
+    <input type="password" name="password" id="regPassword" placeholder="******">
+
+    <label class="required">Confirm Password</label>
+    <input type="password" id="regConfirmPassword" placeholder="******">
+
+    <!-- 🔐 SECURITY QUESTION -->
+    <label class="required">Security Question</label>
+    <select name="securityQuestion" id="securityQuestion">
+    <option value="">-- Select a question --</option>
+    <option>What is your favorite color?</option>
+    <option>What is the name of your childhood best friend?</option>
+    <option>What was your first mobile phone brand?</option>
+    <option>What was the name of your first pet?</option>
+    <option>What was your favorite toy?</option>
+    <option>What was the name of your first school?</option>
+    <option>What was your school nickname?</option>
+    <option>What is your favorite local food?</option>
+    <option>What is your favorite sport?</option>
+    <option>What city were you born in?</option>
+    <option>What is your favorite festival?</option>
+    <option>What was your first vehicle number?</option>
+    <option>What is your favorite book?</option>
+    <option>What nickname does your family call you?</option>
+    <option>What is the name of your hometown?</option>
+    <option>What is your favorite movie?</option>
+    <option>What is your favorite song?</option>
+    <option>Who was your favorite teacher?</option>
+    <option>What street did you grow up on?</option>
+    <option>What color was your school uniform?</option>
+    <option>What was your favorite cartoon as a child?</option>
+    <option>What was your favorite place to visit as a child?</option>
+    <option>What is the name of your favorite cousin?</option>
+    <option>What was your favorite subject in school?</option>
+    <option>What is your favorite book?</option>
+    <option>What was the name of your first crush?</option>
+</select>
+
+    <label class="required">Your Answer</label>
+    <input type="text" name="securityAnswer" id="securityAnswer"
+           placeholder="Enter your answer">
+
+    <button type="submit" class="btn blue">Register</button>
+</form>
+
+        
+    </div>
+</div>
+
+<!-- ================= ERROR POPUP ================= -->
+<div id="errorPopup" style="display:none; position:fixed; inset:0;
+background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center;">
+    <div style="
+        background:#ffffff;
+        color:#dc2626;
+        padding:22px;
+        border-radius:16px;
+        width:360px;
+        text-align:center;
+        font-weight:600;
+        position:relative;
+    ">
+        <!-- ❌ -->
+        <span onclick="closeError()" style="
+            position:absolute;
+            top:10px;
+            right:14px;
+            cursor:pointer;
+            font-size:18px;
+            font-weight:700;
+            color:#dc2626;
+        ">✖</span>
+
+        <div id="errorMsg"></div>
+    </div>
+</div>
+
+<!-- ================= SUCCESS POPUP ================= -->
+<div id="successPopup" style="display:none; position:fixed; inset:0;
+background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center;">
+    <div style="
+        background:#ffffff;
+        color:#16a34a;
+        padding:22px;
+        border-radius:16px;
+        width:360px;
+        text-align:center;
+        font-weight:600;
+        position:relative;
+    ">
+        <div id="successMsg"></div>
+    </div>
+</div>
+<script>
+function validateRegister() {
+
+    const email = regEmail.value.trim();
+    const pwd = regPassword.value;
+    const cpwd = regConfirmPassword.value;
+    const question = document.getElementById("securityQuestion").value;
+    const answer = document.getElementById("securityAnswer").value.trim();
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    if (!email) {
+        showError("Email is required.");
+        return false;
+    }
+
+    if (!emailPattern.test(email)) {
+        showError("Please enter a valid email address.");
+        return false;
+    }
+
+    if (!pwd) {
+        showError("Password is required.");
+        return false;
+    }
+
+    if (pwd.length < 6) {
+        showError("Password must be at least 6 characters.");
+        return false;
+    }
+
+    if (!cpwd) {
+        showError("Confirm password is required.");
+        return false;
+    }
+
+    if (pwd !== cpwd) {
+        showError("Passwords do not match.");
+        return false;
+    }
+
+    if (!question) {
+        showError("Please select a security question.");
+        return false;
+    }
+
+    if (!answer) {
+        showError("Security answer is required.");
+        return false;
+    }
+
+    if (answer.length < 3) {
+        showError("Security answer is too short.");
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+</body>
+</html>

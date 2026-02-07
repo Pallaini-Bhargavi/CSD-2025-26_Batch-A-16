@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>/* ================= ADMIN DASHBOARD ONLY ================= */
+
+/* Push dashboard below absolute header */
+.admin-container {
+    margin-top: 220px;           
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 30px 40px;
+}
+
+/* LEFT SIDEBAR */
+.admin-sidebar {
+    width: 230px;
+    min-width: 230px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 18px;
+    height: fit-content;
+}
+
+/* SIDEBAR ITEMS */
+.admin-sidebar .nav-item {
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #ffffff;
+    transition: background 0.25s ease;
+}
+
+.admin-sidebar .nav-item:hover {
+    background: rgba(37,99,235,0.85);
+}
+
+.admin-sidebar .nav-item.active {
+    background: #2563eb;
+    font-weight: 600;
+}
+
+/* BADGE */
+.admin-sidebar .badge {
+    background: red;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-left: 6px;
+}
+
+/* RIGHT CONTENT */
+.admin-content {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 26px;
+}
+
+/* SECTIONS */
+.admin-content .section {
+    display: none;
+}
+
+.admin-content .section.active {
+    display: block;
+}
+
+/* TABLE */
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 14px;
+}
+
+.data-table th {
+    text-align: left;
+    color: #facc15;
+    font-size: 15px;
+    padding-bottom: 6px;
+}
+
+.data-table td {
+    padding: 12px 10px;
+    vertical-align: top;
+    font-size: 14px;
+    color: #e5e7eb;
+}
+
+/* LONG TEXT CELLS (PASSWORD / KEY / ANSWER) */
+.data-table td:nth-child(3),
+.data-table td:nth-child(4),
+.data-table td:nth-child(5) {
+    max-width: 320px;
+    word-break: break-all;
+    white-space: normal;
+    line-height: 1.5;
+    font-size: 13px;
+}
+
+/* ROW HOVER */
+.data-table tbody tr:hover {
+    background: rgba(255,255,255,0.12);
+    border-radius: 12px;
+}
+/* ===== EMPTY STATE MESSAGE ===== */
+.empty-state {
+    margin-top: 40px;
+    padding: 24px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    color: #e5e7eb;
+    background: rgba(255,255,255,0.08);
+    border-radius: 14px;
+    opacity: 0.9;
+}
+/* ===== Admin Approval Buttons ===== */
+.admin-content .btn.green{
+    background-color: green;
+}
+.admin-content .btn.red{
+    background-color:red;
+}
+.admin-content .btn.green,
+.admin-content .btn.red {
+    width: 70%;
+    padding: 10px 0;
+    font-size: 16px;
+    border-radius: 10px;
+    margin: 10px auto;
+    color: #ffffff;
+    display: block;
+}
+
+/* Optional: hover polish */
+.admin-content .btn.green:hover,
+.admin-content .btn.red:hover {
+    filter: brightness(1.08);
+}
+
+/* REQUEST CARDS */
+.request-card {
+    background: rgba(255,255,255,0.12);
+    padding: 14px;
+    border-radius: 14px;
+    }
+</style>
+</head>
+<body>
+
+<button class="back-btn" onclick="location.href='/admin-logout'">Logout</button>
+
+<div class="page-header">
+    <div class="project-title">
+        🔐 Secure Data Hiding using Calendar Heatmap Steganography
+    </div>
+    <div class="page-subtitle">Admin Database Dashboard</div>
+</div>
+
+<div class="admin-container">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="admin-sidebar">
+    <div class="nav-item active" onclick="showSection('users', this)">
+        Users Data
+    </div>
+
+    <div class="nav-item" onclick="showSection('pending', this)">
+        Approval Requests
+        <span class="badge"
+              th:if="${pendingRequests != null and #lists.size(pendingRequests) > 0}"
+              th:text="${#lists.size(pendingRequests)}">
+        </span>
+    </div>
+
+    <div class="nav-item" onclick="showSection('approved', this)">
+        Approved
+    </div>
+
+    <div class="nav-item" onclick="showSection('rejected', this)">
+        Rejected
+    </div>
+</div>
+
+    <!-- RIGHT CONTENT -->
+    <div class="admin-content">
+
+        <!-- USERS -->
+        <div id="users" class="section active">
+            <h3>Registered Users</h3>
+
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User Email</th>
+                    <th>Password Hash</th>
+                    <th>Public Key</th>
+                    <th>Security Answer</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="u : ${users}">
+                    <td th:text="${u.id}"></td>
+                    <td th:text="${u.userEmail}"></td>
+
+                    <td class="key-cell"
+                        th:text="${u.passwordHash}"></td>
+
+                    <td class="key-cell"
+                        th:text="${u.publicKey}"></td>
+
+                    <td class="key-cell"
+                        th:text="${u.securityAnswerHash}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PENDING -->
+        <div id="pending" class="section">
+    <h3>Password Reset Requests</h3>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(pendingRequests)}">
+        No pending password reset requests.
+    </div>
+
+    <div class="request-card" th:each="r : ${pendingRequests}">
+        <div><b>Email:</b> <span th:text="${r.email}"></span></div>
+        <div class="action-row">
+            <button class="btn green"
+        th:onclick="|approve(${r.id})|">
+    Accept
+</button>
+<button class="btn red"
+        th:onclick="|reject(${r.id})|">
+    Reject
+</button>
+
+        </div>
+    </div>
+</div>
+
+        <!-- APPROVED -->
+        <div id="approved" class="section">
+    <h3>Approved Requests</h3>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(approvedRequests)}">
+         No approved requests yet.
+    </div>
+
+    <div class="request-card" th:each="r : ${approvedRequests}">
+        ✔ <span th:text="${r.email}"></span>
+    </div>
+</div>
+
+
+        <!-- REJECTED -->
+        <div id="rejected" class="section">
+    <h3>Rejected Requests</h3>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-state" th:if="${#lists.isEmpty(rejectedRequests)}">
+         No rejected requests available.
+    </div>
+
+    <!-- LIST -->
+    <div class="request-card" th:each="r : ${rejectedRequests}">
+        ✖ <span th:text="${r.email}"></span>
+    </div>
+</div>
+
+
+    </div>
+</div>
+
+<script>
+function showSection(sectionId, el) {
+
+    // hide ALL sections
+    document.querySelectorAll('.section')
+        .forEach(sec => sec.classList.remove('active'));
+
+    // remove active from ALL nav items
+    document.querySelectorAll('.nav-item')
+        .forEach(item => item.classList.remove('active'));
+
+    // show selected section
+    document.getElementById(sectionId)
+        .classList.add('active');
+
+    // highlight sidebar item
+    el.classList.add('active');
+}
+
+function approve(id) {
+    fetch(`/api/admin/approve/${id}`, { method: "POST" })
+        .then(() => location.reload());
+}
+
+function reject(id) {
+    fetch(`/api/admin/reject/${id}`, { method: "POST" })
+        .then(() => location.reload());
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Data Hiding using Calendar Heatmap steganography</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<button class="back-btn" onclick="location.href='/home'">← Back</button>
+
+<div class="page-header">
+    <div class="project-title">🔐 Secure Data Hiding using Calendar Heatmap steganography</div>
+    <div class="page-subtitle">Decode Message</div>
+</div>
+
+<div class="container">
+    <div class="card" style="margin-top:40px;">
+
+        <label>Upload Heatmap Image</label>
+        <input type="file" id="heatmapFile" accept="image/*">
+
+        <label>Your Password</label>
+        <input type="password" id="decPassword" placeholder="********">
+
+        <button class="btn blue" onclick="validateDecode()">Decode</button>
+
+        <!-- DECODED MESSAGE AREA -->
+        <div id="decodedText" style="display:none; margin-top:18px;">
+            <div style="color:#ffffff; font-weight:600; font-size: 19px; margin-bottom:8px;">
+                Decoded Message:
+            </div>
+
+            <div style="color:#facc15; font-size:15px; margin-bottom:6px;">
+                Message will hide in <span id="countdown">120</span>s
+            </div>
+            <div style="position:relative;">
+    <div id="decodedMessage" style="
+        padding:14px 44px 14px 14px;
+        border-radius:12px;
+        background:#ffffff;
+        color:#16a34a;
+        font-size:19px;
+        font-weight:580;
+        white-space:pre-wrap;
+    "></div>
+
+    <button onclick="downloadDecodedText()" title="Download as TXT"
+        style="
+            position:absolute;
+            right:8px;
+            bottom:8px;
+            background:#3874f7;
+            color:#ffffff;
+            border:none;
+            border-radius:8px;
+            padding:6px 10px;
+            cursor:pointer;
+            font-size:16px;
+        ">
+        ⬇ 
+    </button>
+</div>
+
+            <!-- DOWNLOAD SUCCESS POPUP -->
+<div id="downloadSuccessPopup" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    z-index:1000;
+    align-items:center;
+    justify-content:center;
+">
+    <div style="
+        background:#ffffff;
+        color:#16a34a;
+        padding:22px;
+        border-radius:16px;
+        width:320px;
+        text-align:center;
+        font-weight:600;
+        position:relative;
+    ">
+        <span onclick="closeDownloadSuccess()" style="
+            position:absolute;
+            top:10px;
+            right:14px;
+            cursor:pointer;
+            font-size:18px;
+            color:#000;
+        ">✖</span>
+
+        Successfully downloaded.
+    </div>
+</div>
+
+    </div>
+</div>
+
+<!-- ERROR POPUP -->
+<div id="errorPopup" style="
+    display:none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+">
+    <div style="
+        background:#ffffff;
+        color:#dc2626;
+        padding:22px;
+        border-radius:16px;
+        width:360px;
+        text-align:center;
+        font-weight:600;
+        position:relative;
+    ">
+        <span onclick="closeError()" style="
+            position:absolute;
+            top:10px;
+            right:14px;
+            cursor:pointer;
+            font-size:18px;
+            color: #000000;
+        ">✖</span>
+
+        <div id="errorMsg"></div>
+    </div>
+</div>
+
+<!-- SUCCESS POPUP -->
+<div id="successPopup" style="
+    display:none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+">
+    <div style="
+        background:#ffffff;
+        color:#16a34a;
+        padding:22px;
+        border-radius:16px;
+        width:360px;
+        text-align:center;
+        font-weight:600;
+        position:relative;
+    ">
+        <span onclick="closeSuccess()" style="
+            position:absolute;
+            top:10px;
+            right:14px;
+            cursor:pointer;
+            font-size:18px;
+            color: #000000;
+        ">✖</span>
+
+        <div id="successMsg">Message decoded successfully.</div>
+    </div>
+</div>
+<script>
+
+window.addEventListener("load", function () {
+    const navEntry = performance.getEntriesByType("navigation")[0];
+
+    if (navEntry && navEntry.type === "reload") {
+        window.location.href = "/logout?reason=secure";
+    }
+});
+
+let countdownTimer = null;
+let decodedPayload = "";
+
+/* RESET EVERYTHING */
+function hardResetUI() {
+
+    const decodedText = document.getElementById("decodedText");
+    if (decodedText) decodedText.style.display = "none";
+
+    const decodedMsg = document.getElementById("decodedMessage");
+    if (decodedMsg) decodedMsg.innerText = "";
+
+    const countdown = document.getElementById("countdown");
+    if (countdown) countdown.innerText = "";
+
+    const errorPopup = document.getElementById("errorPopup");
+    if (errorPopup) errorPopup.style.display = "none";
+
+    const successPopup = document.getElementById("successPopup");
+    if (successPopup) successPopup.style.display = "none";
+
+    const downloadPopup = document.getElementById("downloadSuccessPopup");
+    if (downloadPopup) downloadPopup.style.display = "none";
+
+    if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+    }
+}
+
+/* POPUPS */
+function showError(msg) {
+    hardResetUI();
+    document.getElementById("errorMsg").innerText = msg;
+    document.getElementById("errorPopup").style.display = "flex";
+}
+
+function showSuccess(msg) {
+    hardResetUI();
+    document.getElementById("successMsg").innerText = msg;
+    document.getElementById("successPopup").style.display = "flex";
+}
+
+function closeError() {
+    document.getElementById("errorPopup").style.display = "none";
+}
+
+function closeSuccess() {
+    document.getElementById("successPopup").style.display = "none";
+    document.getElementById("decodedText").style.display = "block";
+    document.getElementById("decodedMessage").innerText = decodedPayload;
+    startCountdown(60);
+}
+function downloadDecodedText() {
+    if (!decodedPayload) return;
+
+    const blob = new Blob([decodedPayload], {
+        type: "text/plain;charset=utf-8"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "decoded_message.txt";
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    // show success popup
+    document.getElementById("downloadSuccessPopup").style.display = "flex";
+}
+function closeDownloadSuccess() {
+    document.getElementById("downloadSuccessPopup").style.display = "none";
+}
+
+
+
+/* COUNTDOWN */
+function startCountdown(seconds) {
+    let remaining = seconds;
+    document.getElementById("countdown").innerText = remaining;
+
+    countdownTimer = setInterval(() => {
+        remaining--;
+        document.getElementById("countdown").innerText = remaining;
+
+        if (remaining <= 0) {
+            hardResetUI();
+        }
+    }, 1000);
+}
+
+/* DECODE */
+function validateDecode() {
+    hardResetUI();
+
+    const fileInput = document.getElementById("heatmapFile");
+    const password  = document.getElementById("decPassword").value;
+
+    if (!fileInput.files.length) {
+        showError("Please upload a heatmap image.");
+        return;
+    }
+
+    if (!password) {
+        showError("Password is required.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", fileInput.files[0]);
+    formData.append("password", password);
+
+    fetch("/api/decode/image", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => {
+        if (res.status === 401)
+            throw "Session expired. Please login again.";
+        if (res.status === 403) {
+             return res.text().then(msg => { throw msg; });
+        }
+        if (!res.ok)
+            throw "Decoding failed.";
+        return res.text();
+    })
+    .then(text => {
+        showSuccess("Message decoded successfully");
+        decodedPayload = text;          
+    showSuccess("Message decoded successfully");
+    })
+    .catch(err => showError(err));
+}
+
+/* AUTO RESET */
+document.getElementById("decPassword").addEventListener("input", hardResetUI);
+document.getElementById("heatmapFile").addEventListener("change", hardResetUI);
+</script>
+
+</body>
+</html>
