@@ -3,38 +3,112 @@
 <head>
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="/css/style.css">
-    <style>/* ================= ADMIN DASHBOARD ONLY ================= */
+    <style>/* ===== ADMIN LAYOUT FIX ===== */
+    .account-wrapper {
+    position: fixed;
+    top: 48px;              
+    z-index: 1000;
+}
 
-/* Push dashboard below absolute header */
-.admin-container {
-    margin-top: 220px;           
+.account-wrapper.right {
+    right: 32px;           
+}
+
+
+.account-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    color: #ffff;
+    font-size: 26px;
+    font-weight: bold;
     display: flex;
-    gap: 30px;
-    max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 0 30px 40px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
 
-/* LEFT SIDEBAR */
-.admin-sidebar {
-    width: 230px;
-    min-width: 230px;
-    background: rgba(255,255,255,0.08);
+.account-dropdown {
+    display: none;
+    position: absolute;
+    right:0;
+    left: auto;
+    margin-top: 14px;
+    background: #ffffff;
+    color: #111;
     border-radius: 16px;
-    padding: 18px;
-    height: fit-content;
+    width: 280px;
+    box-shadow: 0 16px 32px rgba(0,0,0,0.25);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+.account-dropdown .item {
+    padding: 18px 20px;
+    font-size: 16px;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-/* SIDEBAR ITEMS */
+.account-dropdown .item.email {
+    font-weight: 600;
+    color: #2563eb;
+    word-break: break-all;
+}
+
+.account-dropdown .item.logout {
+    cursor: pointer;
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.account-dropdown .item.logout:hover {
+    background: #fee2e2;
+}
+
+
+.admin-container {
+    margin-top: 220px;
+    display: flex;
+    gap: 32px;
+    width: 100%;
+    padding: 0 40px 40px;
+    box-sizing: border-box;
+}
+
+/* ===== SIDEBAR ===== */
+.admin-sidebar {
+    width: 260px;
+    min-width: 260px;
+    max-width: 260px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 22px 18px;
+    height: fit-content;
+    box-sizing: border-box;
+}
+
+.sidebar-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #facc15;
+    margin-bottom: 22px;        
+    padding-left: 6px;
+}
+
+/* NAV ITEMS */
 .admin-sidebar .nav-item {
-    padding: 12px 14px;
-    margin-bottom: 10px;
-    border-radius: 10px;
+    display: flex;              
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 15px;
     color: #ffffff;
     transition: background 0.25s ease;
+    box-sizing: border-box;
 }
 
 .admin-sidebar .nav-item:hover {
@@ -48,69 +122,102 @@
 
 /* BADGE */
 .admin-sidebar .badge {
-    background: red;
+    background: #ef4444;
     color: #fff;
     font-size: 12px;
-    padding: 2px 7px;
+    font-weight: 600;
+    padding: 3px 9px;
     border-radius: 20px;
-    margin-left: 6px;
+    min-width: 22px;
+    text-align: center;
+    margin-left: 10px;
+    flex-shrink: 0;            
 }
 
-/* RIGHT CONTENT */
+/* ===== MAIN CONTENT ===== */
 .admin-content {
     flex: 1;
     background: rgba(255,255,255,0.08);
-    border-radius: 18px;
-    padding: 26px;
+    border-radius: 20px;
+    padding: 32px;
+    box-sizing: border-box;
+    min-width: 0;               
 }
 
 /* SECTIONS */
 .admin-content .section {
+   
     display: none;
+}
+.account-dropdown .item.logout a {
+    text-decoration: none;
+    color: #dc2626;   
+    display: block;  
 }
 
 .admin-content .section.active {
     display: block;
 }
 
-/* TABLE */
+/* ===== TABLE ===== */
 .data-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 14px;
+    border-spacing: 0 18px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 14px 18px;
 }
 
 .data-table th {
     text-align: left;
     color: #facc15;
     font-size: 15px;
-    padding-bottom: 6px;
+    padding-bottom: 10px;
+    white-space: nowrap;
 }
 
 .data-table td {
-    padding: 12px 10px;
-    vertical-align: top;
     font-size: 14px;
     color: #e5e7eb;
+    vertical-align: top;
+    max-width: 260px;
+    word-break: break-word;
+    line-height: 1.6;
 }
 
-/* LONG TEXT CELLS (PASSWORD / KEY / ANSWER) */
+/* LONG TEXT CELLS */
 .data-table td:nth-child(3),
 .data-table td:nth-child(4),
 .data-table td:nth-child(5) {
     max-width: 320px;
     word-break: break-all;
-    white-space: normal;
-    line-height: 1.5;
     font-size: 13px;
 }
 
-/* ROW HOVER */
-.data-table tbody tr:hover {
-    background: rgba(255,255,255,0.12);
-    border-radius: 12px;
+/* ROW */
+.data-table tbody tr {
+    background: rgba(255,255,255,0.06);
+    border-radius: 14px;
 }
-/* ===== EMPTY STATE MESSAGE ===== */
+
+.data-table tbody tr:hover {
+    background: rgba(255,255,255,0.14);
+}
+
+/* ===== REQUEST CARDS (APPROVED / REJECTED) ===== */
+.request-card {
+    width: 100%;                /* ✅ full width */
+    background: rgba(255,255,255,0.12);
+    padding: 16px 20px;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    box-sizing: border-box;
+}
+
+/* ===== EMPTY STATE ===== */
 .empty-state {
     margin-top: 40px;
     padding: 24px;
@@ -122,13 +229,16 @@
     border-radius: 14px;
     opacity: 0.9;
 }
-/* ===== Admin Approval Buttons ===== */
-.admin-content .btn.green{
-    background-color: green;
+
+/* ===== ADMIN BUTTONS ===== */
+.admin-content .btn.green {
+    background-color: #16a34a;
 }
-.admin-content .btn.red{
-    background-color:red;
+
+.admin-content .btn.red {
+    background-color: #dc2626;
 }
+
 .admin-content .btn.green,
 .admin-content .btn.red {
     width: 70%;
@@ -140,23 +250,104 @@
     display: block;
 }
 
-/* Optional: hover polish */
 .admin-content .btn.green:hover,
 .admin-content .btn.red:hover {
     filter: brightness(1.08);
 }
+/* ===== FIX APPROVED / REJECTED SECTION WIDTH ===== */
+#approved,
+#rejected,
+#pending {
+    width: 100%;
+}
 
-/* REQUEST CARDS */
-.request-card {
-    background: rgba(255,255,255,0.12);
-    padding: 14px;
-    border-radius: 14px;
-    }
+/* Make request cards stretch properly */
+#approved .request-card,
+#rejected .request-card,
+#pending .request-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* ===== ADMIN ACTION BUTTONS ===== */
+.btn-green,
+.btn-red {
+    width: 140px;
+    padding: 10px 0;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
+
+/* APPROVE */
+.btn-green {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: #ffffff;
+}
+
+.btn-green:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(34,197,94,0.35);
+}
+
+/* REJECT */
+.btn-red {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: #ffffff;
+}
+
+.btn-red:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(239,68,68,0.35);
+}
+
+/* DISABLED */
+.btn-green:disabled,
+.btn-red:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 </style>
 </head>
 <body>
+<div class="account-wrapper right"
+     th:if="${session.USER_EMAIL != null or session.ADMIN_EMAIL != null}">
+    <div class="account-icon" onclick="toggleAccountDropdown(event)">
+        <span th:text="${
+            session.USER_EMAIL != null
+                ? #strings.substring(session.USER_EMAIL,0,1).toUpperCase()
+                : #strings.substring(session.ADMIN_EMAIL,0,1).toUpperCase()
+        }">A</span>
+    </div>
 
-<button class="back-btn" onclick="location.href='/admin-logout'">Logout</button>
+    <!-- Dropdown -->
+    <div class="account-dropdown">
+
+        <div class="item email"
+             th:text="${session.USER_EMAIL != null
+                        ? session.USER_EMAIL
+                        : session.ADMIN_EMAIL}">
+            email@example.com
+        </div>
+
+        <div class="item logout">
+            <a th:href="${session.USER_EMAIL != null ? '/logout' : '/admin-logout'}">
+                Logout
+            </a>
+        </div>
+
+    </div>
+</div>
 
 <div class="page-header">
     <div class="project-title">
@@ -168,13 +359,18 @@
 <div class="admin-container">
 
     <!-- LEFT SIDEBAR -->
-    <div class="admin-sidebar">
+   <div class="admin-sidebar">
+    <div class="sidebar-title">Navigation</div>
+
     <div class="nav-item active" onclick="showSection('users', this)">
-        Users Data
+        <span class="nav-text">Users Data</span>
+    </div>
+    <div class="nav-item" onclick="showSection('resetRequests', this)">
+        <span class="nav-text">Reset Password Logs</span>
     </div>
 
     <div class="nav-item" onclick="showSection('pending', this)">
-        Approval Requests
+        <span class="nav-text">Approval Requests</span>
         <span class="badge"
               th:if="${pendingRequests != null and #lists.size(pendingRequests) > 0}"
               th:text="${#lists.size(pendingRequests)}">
@@ -182,75 +378,111 @@
     </div>
 
     <div class="nav-item" onclick="showSection('approved', this)">
-        Approved
+        <span class="nav-text">Approved</span>
     </div>
 
     <div class="nav-item" onclick="showSection('rejected', this)">
-        Rejected
+        <span class="nav-text">Rejected</span>
     </div>
 </div>
 
     <!-- RIGHT CONTENT -->
     <div class="admin-content">
+        <div id="approved" class="section">
+    <h3>Approved Requests</h3>
 
+    <div class="empty-state" th:if="${#lists.isEmpty(approvedRequests)}">
+        No approved requests yet.
+    </div>
+
+    <div class="request-card" th:each="r : ${approvedRequests}">
+        <span style="font-size:18px;color:#22c55e;">✔</span>
+        <span th:text="${r.email}"></span>
+    </div>
+</div>
+<div id="rejected" class="section">
+    <h3>Rejected Requests</h3>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(rejectedRequests)}">
+        No rejected requests available.
+    </div>
+
+    <div class="request-card" th:each="r : ${rejectedRequests}">
+        <span style="font-size:18px;color:#ef4444;">✖</span>
+        <span th:text="${r.email}"></span>
+    </div>
+</div>
         <!-- USERS -->
         <div id="users" class="section active">
             <h3>Registered Users</h3>
-
+        <div style="overflow-x: auto;">
             <table class="data-table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>User Email</th>
-                    <th>Password Hash</th>
-                    <th>Public Key</th>
-                    <th>Security Answer</th>
-                </tr>
-                </thead>
-
+               <thead>
+    <tr>
+    <th>ID</th>
+    <th>Email</th>
+    <th>Password Hash</th>
+    <th>Public Key</th>
+    <th>Private Key</th>
+    <th>Security Question</th>
+    <th>Security Answer Hash</th>
+    <th>Login Attempts</th>
+    <th>Login Locked Until</th>
+    <th>Reset Attempts</th>
+    <th>Reset Locked Until</th>
+</tr>
+</thead>
                 <tbody>
                 <tr th:each="u : ${users}">
-                    <td th:text="${u.id}"></td>
-                    <td th:text="${u.userEmail}"></td>
+    <td th:text="${u.id}"></td>
+    <td th:text="${u.userEmail}"></td>
 
-                    <td class="key-cell"
-                        th:text="${u.passwordHash}"></td>
+    <td class="key-cell" th:text="${u.passwordHash}"></td>
+    <td class="key-cell" th:text="${u.publicKey}"></td>
+    <td class="key-cell" th:text="${u.encryptedPrivateKey}"></td>
 
-                    <td class="key-cell"
-                        th:text="${u.publicKey}"></td>
+    <td th:text="${u.securityQuestion}"></td>
 
-                    <td class="key-cell"
-                        th:text="${u.securityAnswerHash}"></td>
-                </tr>
-                </tbody>
+    <td class="key-cell" th:text="${u.securityAnswerHash}"></td>
+
+    <td th:text="${u.loginFailAttempts != null ? u.loginFailAttempts : 0}"></td>
+    <td th:text="${u.loginLockedUntil}"></td>
+    <td th:text="${u.resetAttempts}"></td>
+    <td th:text="${u.resetLockedUntil}"></td>
+</tr>
+</tbody>
             </table>
-        </div>
-
+            </div>
+            </div>
+    
         <!-- PENDING -->
-        <div id="pending" class="section">
+<div id="pending" class="section">
     <h3>Password Reset Requests</h3>
 
-    <div class="empty-state" th:if="${#lists.isEmpty(pendingRequests)}">
-        No pending password reset requests.
+    <!-- EMPTY STATE (same style as Approved) -->
+    <div class="empty-state"
+         th:if="${pendingRequests == null or #lists.isEmpty(pendingRequests)}">
+        No approval requests.
     </div>
 
-    <div class="request-card" th:each="r : ${pendingRequests}">
+    <!-- REQUEST CARDS -->
+    <div class="request-card"
+         th:each="r : ${pendingRequests}">
         <div><b>Email:</b> <span th:text="${r.email}"></span></div>
         <div class="action-row">
-           <button class="btn green"
-        th:onclick="|approve(${r.id}, this)|">
-    Accept
-</button>
+            <button class="btn-green"
+                    th:onclick="|approve(${r.id}, this)|">
+                Accept
+            </button>
 
-<button class="btn red"
-        th:onclick="|reject(${r.id}, this)|">
-    Reject
-</button>
-
-
+            <button class="btn-red"
+                    th:onclick="|reject(${r.id}, this)|">
+                Reject
+            </button>
         </div>
     </div>
 </div>
+
 
         <!-- APPROVED -->
         <div id="approved" class="section">
@@ -264,7 +496,6 @@
         ✔ <span th:text="${r.email}"></span>
     </div>
 </div>
-
 
         <!-- REJECTED -->
         <div id="rejected" class="section">
@@ -280,7 +511,31 @@
         ✖ <span th:text="${r.email}"></span>
     </div>
 </div>
+<!-- RESET PASSWORD LOGS -->
+<div id="resetRequests" class="section">
+    <h3>Reset Password Requests</h3>
 
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Requested At</th>
+                <th>Action Taken At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="r : ${allResetRequests}">
+                <td th:text="${r.id}"></td>
+                <td th:text="${r.email}"></td>
+                <td th:text="${r.status}"></td>
+                <td th:text="${r.createdAt}"></td>
+                <td th:text="${r.actionTakenAt}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
     </div>
 </div>
@@ -305,22 +560,110 @@ function showSection(sectionId, el) {
 }
 
 function approve(id, btn) {
-    btn.disabled = true;
+    const card = btn.closest(".request-card");
+
+    //  disable BOTH buttons immediately
+    card.querySelectorAll("button").forEach(b => b.disabled = true);
+
     fetch(`/api/admin/approve/${id}`, { method: "POST" })
         .then(res => {
-            if (!res.ok) alert("Already processed");
-            location.reload();
+            if (!res.ok) {
+                showActionPopup("This request was already processed.");
+                return;
+            }
+
+            showActionPopup("Password reset approved successfully.");
+
+            // move card visually
+            setTimeout(() => {
+    card.remove();
+    updatePendingBadgeAndEmptyState();
+}, 800);
+
         });
 }
 
 function reject(id, btn) {
-    btn.disabled = true;
+    const card = btn.closest(".request-card");
+
+    // 🔒 disable BOTH buttons immediately
+    card.querySelectorAll("button").forEach(b => b.disabled = true);
+
     fetch(`/api/admin/reject/${id}`, { method: "POST" })
         .then(res => {
-            if (!res.ok) alert("Already processed");
-            location.reload();
+            if (!res.ok) {
+                showActionPopup("This request was already processed.");
+                return;
+            }
+
+            showActionPopup(" Password reset rejected.");
+setTimeout(() => {
+    card.remove();
+    updatePendingBadgeAndEmptyState();
+}, 800);            
         });
 }
+function showActionPopup(msg) {
+    document.getElementById("actionMsg").innerText = msg;
+    document.getElementById("actionPopup").style.display = "flex";
+}
+function closeActionPopup() {
+    document.getElementById("actionPopup").style.display = "none";
+}
+</script>
+<!-- ACTION POPUP -->
+<div id="actionPopup" style="
+display:none; position:fixed; inset:0;
+background:rgba(0,0,0,0.7); z-index:999;
+align-items:center; justify-content:center;">
+
+    <div style="
+    background:#fff; padding:22px;
+    border-radius:16px; width:360px;
+    text-align:center; font-weight:600;
+    position:relative; color: #000000;">
+    
+        <span onclick="closeActionPopup()"
+              style="position:absolute; top:10px; right:14px;
+              cursor:pointer; font-size:18px; color:black">✖</span>
+        <div id="actionMsg"></div>
+    </div>
+</div>
+<script>
+function updatePendingBadgeAndEmptyState() {
+    const pendingSection = document.getElementById("pending");
+    const cards = pendingSection.querySelectorAll(".request-card");
+    const badge = document.querySelector(".admin-sidebar .badge");
+    const emptyState = pendingSection.querySelector(".empty-state");
+
+    const count = cards.length;
+
+    if (count === 0) {
+        // remove badge
+        if (badge) badge.remove();
+
+        // show empty state
+        if (emptyState) emptyState.style.display = "block";
+    } else {
+        // update badge count
+        if (badge) {
+            badge.innerText = count;
+        }
+    }
+}
+
+function toggleAccountDropdown(event) {
+    event.stopPropagation(); 
+    const dropdown = document.querySelector(".account-dropdown");
+    dropdown.style.display =
+        dropdown.style.display === "block" ? "none" : "block";
+}
+
+
+document.addEventListener("click", function () {
+    const dropdown = document.querySelector(".account-dropdown");
+    if (dropdown) dropdown.style.display = "none";
+});
 
 </script>
 

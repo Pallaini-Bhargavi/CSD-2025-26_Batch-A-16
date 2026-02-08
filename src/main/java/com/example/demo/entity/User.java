@@ -1,6 +1,13 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
@@ -19,7 +26,6 @@ public class User {
     @Column(name = "public_key", columnDefinition = "TEXT", nullable = false)
     private String publicKey;
 
-    // ✅ ENCRYPTED PRIVATE KEY (NOT RAW)
     @Column(name = "encrypted_private_key", columnDefinition = "TEXT", nullable = false)
     private String encryptedPrivateKey;
 
@@ -29,7 +35,48 @@ public class User {
     @Column(name = "security_answer_hash", nullable = false)
     private String securityAnswerHash;
 
-    // ===== GETTERS & SETTERS =====
+    @Column(name = "reset_attempts", nullable = false)
+    private int resetAttempts = 0;
+
+    @Column(name = "reset_locked_until")
+    private LocalDateTime resetLockedUntil;
+
+    @Column(nullable = false)
+    private int loginFailAttempts = 0;
+
+    @Column
+    private LocalDateTime loginLockedUntil;
+
+public LocalDateTime getResetLockedUntil() {
+    return resetLockedUntil;
+}
+
+public void setResetLockedUntil(LocalDateTime resetLockedUntil) {
+    this.resetLockedUntil = resetLockedUntil;
+}
+
+    public int getResetAttempts() {
+        return resetAttempts;
+    }
+
+    public void setResetAttempts(int resetAttempts) {
+        this.resetAttempts = resetAttempts;
+    }
+public int getLoginFailAttempts() {
+    return loginFailAttempts;
+}
+
+public void setLoginFailAttempts(int loginFailAttempts) {
+    this.loginFailAttempts = loginFailAttempts;
+}
+
+public LocalDateTime getLoginLockedUntil() {
+    return loginLockedUntil;
+}
+
+public void setLoginLockedUntil(LocalDateTime loginLockedUntil) {
+    this.loginLockedUntil = loginLockedUntil;
+}
 
     public Long getId() {
         return id;
@@ -82,4 +129,5 @@ public class User {
     public void setSecurityAnswerHash(String securityAnswerHash) {
         this.securityAnswerHash = securityAnswerHash;
     }
+
 }

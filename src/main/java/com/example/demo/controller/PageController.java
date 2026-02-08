@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
+// import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import jakarta.servlet.http.HttpSession;
@@ -15,12 +16,10 @@ public class PageController {
 
     @GetMapping("/home")
     public String home(HttpSession session) {
-
-        //  SESSION CHECK
-        if (session.getAttribute("USER_EMAIL") == null) {
-            return "redirect:/login";
-        }
-
-        return "home";
+    if (session.getAttribute("USER_EMAIL") == null) {
+        return "redirect:/login";
     }
+    return "home";
+}
+
 }

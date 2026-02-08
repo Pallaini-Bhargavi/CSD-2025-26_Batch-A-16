@@ -4,10 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.mail.SimpleMailMessage;
+
 import jakarta.mail.internet.MimeMessage;
 
 @Service
@@ -23,8 +24,18 @@ public class MailService {
         message.setText(body);
         mailSender.send(message);
     }
+    public void send(String to, String subject, String body) {
 
-    public void sendHeatmapMail(
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+
+        mailSender.send(message);
+    }
+
+    @SuppressWarnings("null")
+public void sendHeatmapMail(
             String to,
             String subject,
             String body,
@@ -53,7 +64,8 @@ public class MailService {
     }
 
     // ✉️ Text-only mail (sender)
-    public void sendTextMail(
+    @SuppressWarnings("null")
+public void sendTextMail(
             String to,
             String subject,
             String body) throws Exception {

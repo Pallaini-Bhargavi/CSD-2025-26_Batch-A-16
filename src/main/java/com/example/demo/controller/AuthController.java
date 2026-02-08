@@ -1,11 +1,14 @@
 package com.example.demo.controller;
 
 import java.security.KeyPair;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+// import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-public String register(HttpServletRequest request,
+    public String register(HttpServletRequest request,
                        RedirectAttributes redirectAttributes) {
 
     try {
@@ -69,6 +72,11 @@ public String register(HttpServletRequest request,
         user.setEncryptedPrivateKey(Base64.getEncoder()
                 .encodeToString(keyPair.getPrivate().getEncoded()));
 
+        if (userRepository.existsByUserEmail(user.getUserEmail())) {
+        throw new RuntimeException("User already exists");
+    }
+
+
         userRepository.save(user);
 
         redirectAttributes.addFlashAttribute(
@@ -90,8 +98,8 @@ public String register(HttpServletRequest request,
         return "login";
     }
 
-    @PostMapping("/login")
-public String login(@RequestParam String email,
+   @PostMapping("/login")
+    public String login(@RequestParam String email,
                     @RequestParam String password,
                     RedirectAttributes redirectAttributes,
                     HttpSession session) {
@@ -102,30 +110,78 @@ public String login(@RequestParam String email,
 
     if (user == null) {
         redirectAttributes.addFlashAttribute(
-                "loginError", "Email not found.");
+                "loginError",
+                "Invalid email or password."
+        );
         return "redirect:/login";
     }
 
-    if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+    // 🔒 CHECK LOCK
+    if (user.getLoginLockedUntil() != null &&
+        user.getLoginLockedUntil().isAfter(LocalDateTime.now())) {
+
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
         redirectAttributes.addFlashAttribute(
-                "loginError", "Incorrect password.");
+                "loginError",
+                "Account locked until " +
+                user.getLoginLockedUntil().format(formatter)
+        );
         return "redirect:/login";
     }
 
-    // ✅ LOAD STORED PRIVATE KEY
+    // WRONG PASSWORD
+    if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+
+        int attempts = user.getLoginFailAttempts() + 1;
+        user.setLoginFailAttempts(attempts);
+
+        if (attempts >= 3) {
+            LocalDateTime lockUntil =
+                    LocalDateTime.now().plusHours(3);
+            user.setLoginLockedUntil(lockUntil);
+            userRepository.save(user);
+
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+            redirectAttributes.addFlashAttribute(
+                    "loginError",
+                    "Account locked until " +
+                    lockUntil.format(formatter)
+            );
+            return "redirect:/login";
+        }
+
+        userRepository.save(user);
+
+        redirectAttributes.addFlashAttribute(
+                "loginError",
+                "Invalid password. Attempt " + attempts + " / 3"
+        );
+        return "redirect:/login";
+    }
+
+    // ✅ SUCCESS LOGIN
+    user.setLoginFailAttempts(0);
+    user.setLoginLockedUntil(null);
+    userRepository.save(user);
+
     session.setAttribute("USER_EMAIL", user.getUserEmail());
     session.setAttribute("PRIVATE_KEY", user.getEncryptedPrivateKey());
+    redirectAttributes.addFlashAttribute("loginSuccess", true);
+    return "redirect:/home";
 
-    return "redirect:/home"; // or /encode
 }
 
 
     // ================= LOGOUT =================
+@GetMapping("/logout")
+public String logout(HttpSession session) {
+    session.invalidate();   // destroy session
+    return "redirect:/login?logout=success";
+}
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
-    }
 }
 

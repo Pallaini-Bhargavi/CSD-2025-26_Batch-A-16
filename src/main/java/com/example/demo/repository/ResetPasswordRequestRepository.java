@@ -17,7 +17,12 @@ public interface ResetPasswordRequestRepository
     Optional<ResetPasswordRequest>
     findTopByEmailAndStatusOrderByCreatedAtDesc(String email, String status);
 
-    
     Optional<ResetPasswordRequest>
     findTopByEmailOrderByCreatedAtDesc(String email);
+    boolean existsByEmailAndStatus(String email, String status);
+    void deleteByEmail(String email);
+    boolean existsByEmail(String email);
+
+    List<ResetPasswordRequest> findByStatusIsNull();
+
 }

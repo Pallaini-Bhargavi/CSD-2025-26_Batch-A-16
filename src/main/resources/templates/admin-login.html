@@ -93,52 +93,7 @@
         font-weight:600;
         position:relative;
     ">
-        <span onclick="closeSuccess()" style="
-            position:absolute;
-            top:10px;
-            right:14px;
-            cursor:pointer;
-            font-size:18px;
-            font-weight:700;
-            color:#000000;
-        ">✖</span>
-
         <div> Successfully logged in as Admin</div>
-    </div>
-</div>
-<!-- ADMIN LOGOUT SUCCESS POPUP -->
-<div th:if="${logoutMsg}"
-     style="
-        position:fixed;
-        inset:0;
-        background:rgba(0,0,0,0.7);
-        z-index:999;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-     ">
-    <div style="
-        background:#ffffff;
-        padding:22px;
-        border-radius:16px;
-        width:360px;
-        text-align:center;
-        font-weight:600;
-        color:#16a34a;
-        position:relative;
-     ">
-        <span onclick="this.parentElement.parentElement.style.display='none'"
-              style="
-                position:absolute;
-                top:10px;
-                right:14px;
-                cursor:pointer;
-                font-size:18px;
-                font-weight:700;
-                color:#000000;
-              ">✖</span>
-
-        <div th:text="${logoutMsg}"></div>
     </div>
 </div>
 
@@ -155,10 +110,6 @@ function closeError() {
 
 function showSuccess() {
     document.getElementById("successPopup").style.display = "flex";
-}
-
-function closeSuccess() {
-    document.getElementById("successPopup").style.display = "none";
 }
 
 /* ================= VALIDATION ================= */
@@ -190,6 +141,37 @@ function validateAdminLogin() {
     showSuccess();
     setTimeout(() => {
         window.location.href = "/admin-dashboard";
+    }, 1000);
+</script>
+<!-- ADMIN LOGOUT SUCCESS POPUP -->
+<div id="logoutPopup"
+     th:if="${logoutMsg}"
+     style="
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.6);
+        z-index:999;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+     ">
+    <div style="
+        background:#ffffff;
+        padding:22px;
+        border-radius:16px;
+        width:360px;
+        text-align:center;
+        font-weight:600;
+        color:#16a34a;
+     ">
+        <div th:text="${logoutMsg}"></div>
+    </div>
+</div>
+
+<script th:if="${logoutMsg}">
+    setTimeout(() => {
+        const popup = document.getElementById("logoutPopup");
+        if (popup) popup.remove();   
     }, 1200);
 </script>
 
