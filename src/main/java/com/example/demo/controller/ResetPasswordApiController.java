@@ -99,7 +99,7 @@ public class ResetPasswordApiController {
     //  SEND ADMIN MAIL
 try {
     mailService.sendTextMail(
-        "calendarheatmap@gmail.com",
+        "admin email",//USE ADMIN MAIL
         "Password Reset Approval Request",
         "User with email " + email +
         " has requested a password reset.\n\n" +
